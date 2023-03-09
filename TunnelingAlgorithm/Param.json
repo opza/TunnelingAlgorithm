@@ -1,0 +1,45 @@
+{
+  "CorridorMargin": 5,
+
+  "GenerationCount": 7,
+
+  "Enters": [
+    {
+      "posX": 5,
+      "posY": 50,
+      "tunnelSize": 3,
+      "dir": 1
+    }
+  ],
+
+  "JoinTunnelerSize": 1,
+
+  "Prob_BornTunneler": [ 35, 35, 45, 45, 35, 25, 25],
+
+  "Prob_ChangeJoinTunneler": [ 0, 100, 100, 0, 0, 5 ],
+
+  "Count_BornTunnelerMin": [ 2, 3, 5, 5, 3, 2, 2 ],
+
+  "Prob_ChangeDirection": [ 40, 30, 55, 45, 30, 30, 30 ],
+
+  "CorridorMinDist": [ 10, 7, 5, 5, 7, 7, 5 ],
+
+  "Speed": [ 10, 5, 5, 5, 7, 10, 5 ],
+
+  "MaxLife": [ 8, 5, 10, 8, 10, 8, 5 ],
+
+  "Prob_BuildHallFromScaleUp": [ 0, 0, 0, 45, 20, 20, 0 ],
+
+  "Prob_BuildHallFromScaleDown": [ 0, 0, 0, 0, 25, 20, 0 ],
+
+  "Prob_BuildHallFromCorner": [ 10, 10, 20, 20, 20, 20, 20 ],
+
+  "Prob_BuildRoom": [ 5, 5, 5, 5, 15, 5, 5 ],
+
+  "RoomSize": {
+    "widthMin": 5,
+    "widthMax": 12,
+    "heightMin": 5,
+    "heightMax": 12
+  }
+}
