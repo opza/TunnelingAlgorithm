@@ -2,7 +2,7 @@
 
 namespace TunnelingAlgorithm
 {
-    public class MainTunneler : Tunneler
+    internal class MainTunneler : Tunneler
     {
         ChilderMainTunnelerFromMainTunneler _childerMainTunneler;
         ChilderJoinTunnelerFromMainTunneler _childerJoinTunneler;

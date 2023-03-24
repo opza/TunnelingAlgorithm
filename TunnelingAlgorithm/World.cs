@@ -11,7 +11,7 @@ namespace TunnelingAlgorithm
         South
     }
 
-    public class World
+    internal class World
     {
         int _width;
         int _height;
@@ -19,6 +19,8 @@ namespace TunnelingAlgorithm
 
         public int Width => _width;
         public int Height => _height;
+
+        public Tile[,] Tiles => _tiles;
 
 
         public World(int width, int height)
@@ -109,14 +111,13 @@ namespace TunnelingAlgorithm
 
         public bool ValidPosition(int x, int y) => x >= 0 && x < _width && y >= 0 && y < _height;
 
-        public Tunneler[] Generate()
+        public Tunneler[] Generate(string paramPath)
         {
             InitTiles();          
 
             var rand = new Random();
 
-            var path = "D:\\Code\\TunnelingAlgorithm\\TunnelingAlgorithm\\Param.json";
-            var config = Config.Read(path);
+            var config = Config.Read(paramPath);
             var rootTunnelers = Tunneler.CreateRootTunnelers(this, config);
 
             var lastTunnelers = new List<Tunneler>();

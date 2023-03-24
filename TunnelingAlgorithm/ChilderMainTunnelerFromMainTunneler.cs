@@ -4,7 +4,7 @@ using TunnelingAlgorithm.Configurations;
 
 namespace TunnelingAlgorithm
 {
-    public class ChilderMainTunnelerFromMainTunneler : Childer<MainTunneler, MainTunneler>
+    internal class ChilderMainTunnelerFromMainTunneler : Childer<MainTunneler, MainTunneler>
     {
         public ChilderMainTunnelerFromMainTunneler(MainTunneler parent, int? seed = null) : base(parent, seed)
         {

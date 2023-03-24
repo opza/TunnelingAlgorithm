@@ -4,7 +4,7 @@ using System.Numerics;
 namespace TunnelingAlgorithm
 {
     [DebuggerDisplay("{XMin}, {YMin}, {XMax}, {YMax}")]
-    public struct Rect
+    internal struct Rect
     {
         public Position MinPosition { get; set; }
         public Position MaxPosition { get; set; }

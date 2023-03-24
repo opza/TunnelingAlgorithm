@@ -1,6 +1,6 @@
 ﻿namespace TunnelingAlgorithm
 {
-    public enum SplitPointType
+    internal enum SplitPointType
     {
         None,
         ScaleUp,
@@ -8,13 +8,13 @@
         Corner,
     }
 
-    public enum ConnectState
+    internal enum ConnectState
     {
         NonConnected,
         Connected
     }
 
-    public class SplitPoint
+    internal class SplitPoint
     {
         const int SPLIT_STATE_CHECKING_SIZE = 2;
 

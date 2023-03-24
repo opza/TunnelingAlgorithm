@@ -4,7 +4,7 @@ using TunnelingAlgorithm.Configurations;
 
 namespace TunnelingAlgorithm
 {
-    public class JoinTunneler : Tunneler
+    internal class JoinTunneler : Tunneler
     {
         ChilderMainTunnelerFromJoinTunneler _childerMainTunneler;
         ChilderJoinTunnelerFromJoinTunneler _childerJoinTunneler;

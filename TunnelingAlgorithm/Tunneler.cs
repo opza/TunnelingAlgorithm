@@ -3,7 +3,7 @@ using TunnelingAlgorithm.Configurations;
 
 namespace TunnelingAlgorithm
 {
-    public abstract class Tunneler
+    internal abstract class Tunneler
     {
         protected const int BORDER_SIZE = 1;
 

@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace TunnelingAlgorithm
 {
     [DebuggerDisplay("{X}, {Y}")]
-    public struct Position
+    internal struct Position
     {
         public int X { get; }
         public int Y { get; }

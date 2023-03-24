@@ -3,7 +3,7 @@ using System.Net.NetworkInformation;
 
 namespace TunnelingAlgorithm
 {
-    public class Roomer
+    internal class Roomer
     {
         public const int BORDER_SIZE = 1;
 

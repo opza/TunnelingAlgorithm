@@ -2,7 +2,7 @@
 
 namespace TunnelingAlgorithm
 {
-    public abstract class Childer<ChildT, ParentT> where ChildT : Tunneler where ParentT : Tunneler
+    internal abstract class Childer<ChildT, ParentT> where ChildT : Tunneler where ParentT : Tunneler
     {
         protected ParentT _parent;
         protected Random _rand;

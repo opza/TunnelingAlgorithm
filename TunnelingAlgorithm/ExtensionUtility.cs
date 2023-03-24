@@ -1,6 +1,6 @@
 ﻿namespace TunnelingAlgorithm
 {
-    public static class ExtensionUtility
+    internal static class ExtensionUtility
     {
         static Random _random;
 
