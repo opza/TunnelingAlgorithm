@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Text.Json.Serialization;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace TunnelingAlgorithm.Configurations
@@ -60,7 +60,7 @@ namespace TunnelingAlgorithm.Configurations
         public static Config Read(string path)
         {
             if (!File.Exists(path))
-                throw new Exception();
+                throw new ArgumentException($"file is not existed ({path})");
 
             var paramJson = File.ReadAllText(path);
             var config = JsonConvert.DeserializeObject<Config>(paramJson);

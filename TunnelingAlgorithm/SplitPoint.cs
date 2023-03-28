@@ -1,4 +1,8 @@
-﻿namespace TunnelingAlgorithm
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace TunnelingAlgorithm
 {
     internal enum SplitPointType
     {
