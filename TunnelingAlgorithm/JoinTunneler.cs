@@ -1,6 +1,5 @@
-﻿
-
-using TunnelingAlgorithm.Configurations;
+﻿using TunnelingAlgorithm.Configurations;
+using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
 {
@@ -187,7 +186,7 @@ namespace TunnelingAlgorithm
             };
 
 
-            return candidatesInDirection.GetRandomElementOrDefault();
+            return candidatesInDirection.GetRandomElementOrDefualt();
         }
 
 

@@ -3,8 +3,6 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
-using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using TunnelingAlgorithm;
 
@@ -25,6 +23,7 @@ namespace WPFPrinter
 
         public ActionCommand GenerateCommand { get; set; }
         public BitmapImage BitmapImage => _bitmap.ConvertToBitmapImage();
+        public float EmptyPercentage { get; set; }
 
         public MainViewModel()
         {          
@@ -35,9 +34,8 @@ namespace WPFPrinter
 
         void GenerateWorld()
         {
-            //var tunnelers = _world.Generate();
-
             var tiles = _generator.Generate(_worldWidth, _worldHeight, PARAM_PATH);
+            var emptyTileCount = 0f;
 
             for (int y = 0; y < _worldHeight; y++)
             {
@@ -49,6 +47,7 @@ namespace WPFPrinter
                     {
                         case TileType.Rock:
                             color = Color.Brown;
+                            emptyTileCount++;
                             break;
                         case TileType.Corridor:
                             color = Color.White;
@@ -70,51 +69,9 @@ namespace WPFPrinter
                 }
             }
 
-            //for (int y = 0; y < _world.Height; y++)
-            //{
-            //    for (int x = 0; x < _world.Width; x++)
-            //    {
-            //        var tile = _world.GetTile(x, _world.Height - y - 1);
-            //        Color color;
-            //        switch (tile.Type)
-            //        {
-            //            case TileType.Rock:
-            //                color = Color.Brown;
-            //                break;
-            //            case TileType.Corridor:
-            //                color = Color.White;
-            //                break;
-            //            case TileType.Room:
-            //                color = Color.Gray;
-            //                break;
-            //            case TileType.Wall:
-            //                color = Color.Black;
-            //                break;
-            //            case TileType.Door:
-            //                color = Color.Green;
-            //                break;
-            //            default:
-            //                continue;
-            //        }
+            EmptyPercentage = emptyTileCount / (_worldWidth * _worldHeight) * 100;
 
-            //        _bitmap.SetPixel(x, y, color);
-            //    }
-            //}
-
-            //foreach (var tunneler in tunnelers)
-            //{
-            //    foreach (var splitPoint in tunneler.SplitPoints)
-            //    {
-            //        for (int y = splitPoint.YMin; y <= splitPoint.YMax; y++)
-            //        {
-            //            for (int x = splitPoint.XMin; x <= splitPoint.XMax; x++)
-            //            {
-            //                _bitmap.SetPixel(x, world.Height - y - 1, Color.LightPink);
-            //            }
-            //        }
-            //    }
-            //}
-
+            OnPropertyChanged(nameof(EmptyPercentage));
             OnPropertyChanged(nameof(BitmapImage));
         }
 

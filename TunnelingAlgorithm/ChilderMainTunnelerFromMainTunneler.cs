@@ -1,6 +1,4 @@
-﻿
-
-using TunnelingAlgorithm.Configurations;
+﻿using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
 {
@@ -21,7 +19,7 @@ namespace TunnelingAlgorithm
             foreach (var splitPoint in candidatedSplitPoints)
             {
                 var dirs = Enum.GetValues<Direction>().ToList();
-                dirs.Remove(_parent.RootDir.GetReverseDirection());
+                dirs.Remove(GetReverseDirection(_parent.RootDir));
                 dirs.Shuffle();
 
                 foreach (var dir in dirs)
@@ -113,5 +111,13 @@ namespace TunnelingAlgorithm
 
             return childs.ToArray();
         }
+
+        Direction GetReverseDirection(Direction direction) => direction switch
+        {
+            Direction.North => Direction.South,
+            Direction.East => Direction.West,
+            Direction.West => Direction.East,
+            Direction.South => Direction.North
+        };
     }
 }

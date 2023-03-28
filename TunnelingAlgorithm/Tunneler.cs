@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.SymbolStore;
-using TunnelingAlgorithm.Configurations;
+﻿using TunnelingAlgorithm.Configurations;
+using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
 {
@@ -74,7 +74,7 @@ namespace TunnelingAlgorithm
             _config = config;
             _world = world;
             _roomer = new Roomer(world);
-            System.Diagnostics.Debug.WriteLine($"Roomer Seed : {_roomer.Seed}");
+            //System.Diagnostics.Debug.WriteLine($"Roomer Seed : {_roomer.Seed}");
 
             _gen = gen;
 

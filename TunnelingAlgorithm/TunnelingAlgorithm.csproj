@@ -4,10 +4,17 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="OpzaUtil">
+			<HintPath>D:\Code\TunnelingAlgorithm\dll\OpzaUtil.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>
