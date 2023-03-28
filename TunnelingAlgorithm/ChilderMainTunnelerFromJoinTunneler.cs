@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using OpzaUtil.Linq;
+using OpzaUtil;
 
 namespace TunnelingAlgorithm
 {
@@ -21,7 +22,10 @@ namespace TunnelingAlgorithm
 
             foreach (var splitPoint in candidatedSplitPoints)
             {
-                var dirs = Enum.GetValues<Direction>();
+                var dirs = Enum.GetValues(typeof(Direction))
+                    .ToEnumerable<Direction>()
+                    .ToArray();
+
                 dirs.Shuffle();
 
                 foreach (var dir in dirs)
@@ -76,7 +80,8 @@ namespace TunnelingAlgorithm
 
             foreach (var splitPoint in candidatedSplitPoints)
             {
-                foreach (var dir in Enum.GetValues<Direction>())
+                var dirs = Enum.GetValues(typeof(Direction)).ToEnumerable<Direction>();
+                foreach (var dir in dirs)
                 {
                     if (splitPoint[dir] == ConnectState.Connected)
                         continue;

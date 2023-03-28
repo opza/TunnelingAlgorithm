@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using OpzaUtil;
 
 namespace TunnelingAlgorithm
 {
@@ -52,7 +53,8 @@ namespace TunnelingAlgorithm
             _type = type;
             _rect = rect;
 
-            foreach (var dir in Enum.GetValues<Direction>())
+            var dirs = Enum.GetValues(typeof(Direction)).ToEnumerable<Direction>();
+            foreach (var dir in dirs)
             {
                 _connectStates.Add(dir, ConnectState.NonConnected);
             }
@@ -60,7 +62,8 @@ namespace TunnelingAlgorithm
 
         public void UpdateState(World world)
         {
-            foreach (var dir in Enum.GetValues<Direction>())
+            var dirs = Enum.GetValues(typeof(Direction)).ToEnumerable<Direction>();
+            foreach (var dir in dirs)
             {
                 var splitState = dir switch
                 {

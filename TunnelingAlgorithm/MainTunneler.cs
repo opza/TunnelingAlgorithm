@@ -2,6 +2,7 @@
 using System.Linq;
 using TunnelingAlgorithm.Configurations;
 using OpzaUtil.Linq;
+using OpzaUtil;
 
 namespace TunnelingAlgorithm
 {
@@ -139,16 +140,13 @@ namespace TunnelingAlgorithm
 
         protected override Direction[] GetCandidatedDirections(Direction currDir)
         {
-            var candidatedDirs = Enum.GetValues<Direction>().ToList();
+            var candidatedDirs = Enum.GetValues(typeof(Direction))
+                .ToEnumerable<Direction>()
+                .ToList();
+
             candidatedDirs.Remove(GetReverseDirection(currDir));
             candidatedDirs.Remove(currDir);
 
-            //if (_gen < 1)
-            //    candidatedDirs.Remove(GetReverseDirection(_startDir));
-            //else
-            //    candidatedDirs.Remove(GetReverseDirection(_rootDir));
-
-            //candidatedDirs.Remove(GetReverseDirection(_startDir));
             candidatedDirs.Remove(GetReverseDirection(_rootDir));
 
             candidatedDirs.Shuffle();

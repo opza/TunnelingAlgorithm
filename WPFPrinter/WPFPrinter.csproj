@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TunnelingAlgorithm\TunnelingAlgorithm.csproj" />
+    <Reference Include="TunnelingAlgorithm">
+      <HintPath>..\TunnelingAlgorithm\bin\Release\netstandard2.1\TunnelingAlgorithm.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

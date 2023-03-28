@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using OpzaUtil;
 using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
@@ -20,7 +22,10 @@ namespace TunnelingAlgorithm
 
             foreach (var splitPoint in candidatedSplitPoints)
             {
-                var dirs = Enum.GetValues<Direction>();
+                var dirs = Enum.GetValues(typeof(Direction))
+                    .ToEnumerable<Direction>()
+                    .ToArray();
+
                 dirs.Shuffle();
 
                 foreach (var dir in dirs)

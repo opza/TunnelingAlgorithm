@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using TunnelingAlgorithm.Configurations;
 using OpzaUtil.Linq;
+using OpzaUtil;
 
 namespace TunnelingAlgorithm
 {
@@ -150,7 +151,10 @@ namespace TunnelingAlgorithm
         {
             var candidates = new List<Position>();
 
-            var dirs = Enum.GetValues<Direction>();
+            var dirs = Enum.GetValues(typeof(Direction))
+                .ToEnumerable<Direction>()
+                .ToArray();
+
             dirs.Shuffle();
 
             foreach (var dir in dirs)

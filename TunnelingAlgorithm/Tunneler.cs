@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using TunnelingAlgorithm.Configurations;
 using OpzaUtil.Linq;
+using OpzaUtil;
 
 namespace TunnelingAlgorithm
 {
@@ -107,7 +108,10 @@ namespace TunnelingAlgorithm
 
             foreach (var splitPoint in candidatedSplitPoints)
             {
-                var dirs = Enum.GetValues<Direction>();
+                var dirs = Enum.GetValues(typeof(Direction))
+                    .ToEnumerable<Direction>()
+                    .ToArray();
+
                 dirs.Shuffle();
 
                 foreach (var dir in dirs)
@@ -134,7 +138,9 @@ namespace TunnelingAlgorithm
         {
             foreach (var splitPoint in _splitPoints)
             {
-                var dirs = Enum.GetValues<Direction>();
+                var dirs = Enum.GetValues(typeof(Direction))
+                    .ToEnumerable<Direction>();
+
                 foreach (var dir in dirs)
                 {
                     if (splitPoint[dir] == ConnectState.Connected)
@@ -154,7 +160,10 @@ namespace TunnelingAlgorithm
 
         protected bool BuildRoom(SplitPoint splitPoint, bool aligned = false)
         {
-            var dirs = Enum.GetValues<Direction>();
+            var dirs = Enum.GetValues(typeof(Direction))
+                .ToEnumerable<Direction>()
+                .ToArray();
+
             dirs.Shuffle();
 
             foreach (var dir in dirs)
@@ -346,7 +355,7 @@ namespace TunnelingAlgorithm
 
         protected Rect? GetCorridor(Position pivotPos, Direction dir)
         {
-            Position minPos = new();
+            Position minPos = new Position();
 
             switch (dir)
             {
@@ -488,7 +497,10 @@ namespace TunnelingAlgorithm
 
         protected virtual Direction[] GetCandidatedDirections(Direction currDir)
         {
-            var candidatedDirs = Enum.GetValues<Direction>().ToList();
+            var candidatedDirs = Enum.GetValues(typeof(Direction))
+                .ToEnumerable<Direction>()
+                .ToList();
+
             candidatedDirs.Remove(GetReverseDirection(_startDir));
             candidatedDirs.Remove(GetReverseDirection(currDir));
             candidatedDirs.Shuffle();

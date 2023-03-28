@@ -8,10 +8,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
-	<ItemGroup>
-		<Reference Include="OpzaUtil">
-			<HintPath>D:\Code\TunnelingAlgorithm\dll\OpzaUtil.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+  <ItemGroup>
+    <Reference Include="OpzaUtil">
+      <HintPath>..\..\OpzaUtil\DLL\Release\netstandard2.0\OpzaUtil.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
