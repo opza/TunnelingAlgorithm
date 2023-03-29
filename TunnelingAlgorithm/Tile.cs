@@ -9,7 +9,7 @@
         Door
     }
 
-    public class Tile
+    internal class Tile
     {
         readonly int _x;
         readonly int _y;
