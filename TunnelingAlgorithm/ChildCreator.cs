@@ -2,12 +2,12 @@
 
 namespace TunnelingAlgorithm
 {
-    internal abstract class Childer<ChildT, ParentT> where ChildT : Tunneler where ParentT : Tunneler
+    internal abstract class ChildCreator<ChildT, ParentT> where ChildT : Tunneler where ParentT : Tunneler
     {
         protected ParentT _parent;
         protected Random _rand;
 
-        public Childer(ParentT parent, int? seed = null)
+        public ChildCreator(ParentT parent, int? seed = null)
         {
             _parent = parent;
             if(seed.HasValue)

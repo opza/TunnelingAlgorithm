@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using OpzaUtil.Linq;
+using System.Linq;
 using OpzaUtil;
+using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
 {
-    internal class ChilderMainTunnelerFromJoinTunneler : Childer<MainTunneler, JoinTunneler>
+    internal class ChildCreatorOfMainTunnelerFromMainTunneler : ChildCreator<MainTunneler, MainTunneler>
     {
-        public ChilderMainTunnelerFromJoinTunneler(JoinTunneler parent, int? seed = null) : base(parent, seed)
+        public ChildCreatorOfMainTunnelerFromMainTunneler(MainTunneler parent, int? seed = null) : base(parent, seed)
         {
         }
 
-        public override MainTunneler CreateChild(int? childSeed)
+        public override MainTunneler CreateChild(int? seed)
         {
             if (_parent.SplitPoints.Length <= 0)
                 return null;
@@ -24,8 +24,9 @@ namespace TunnelingAlgorithm
             {
                 var dirs = Enum.GetValues(typeof(Direction))
                     .ToEnumerable<Direction>()
-                    .ToArray();
+                    .ToList();
 
+                dirs.Remove(GetReverseDirection(_parent.RootDir));
                 dirs.Shuffle();
 
                 foreach (var dir in dirs)
@@ -60,7 +61,7 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    return new MainTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, childTunnelSize, dir, dir, false, childSeed);
+                    return new MainTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed);
 
                 }
             }
@@ -111,12 +112,20 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    childs.Add(new MainTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, childTunnelSize, dir, dir, false, seed));
+                    childs.Add(new MainTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed));
 
                 }
             }
 
             return childs.ToArray();
         }
+
+        Direction GetReverseDirection(Direction direction) => direction switch
+        {
+            Direction.North => Direction.South,
+            Direction.East => Direction.West,
+            Direction.West => Direction.East,
+            Direction.South => Direction.North
+        };
     }
 }

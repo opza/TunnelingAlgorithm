@@ -12,7 +12,6 @@ namespace TunnelingAlgorithm
         protected const int BORDER_SIZE = 1;
 
         protected const int TUNNEL_SIZE_MIN = 1;
-        protected const int CORRIDOR_MARGIN = 3;
 
         protected Random _rand;
 
@@ -53,15 +52,13 @@ namespace TunnelingAlgorithm
         public int HeightMin => BORDER_SIZE;
         public int HeightMax => _world.Height - BORDER_SIZE - 1;
 
-        public int CorridorWidthMin => CORRIDOR_MARGIN + BORDER_SIZE;
-        public int CorridorWidthMax => _world.Width - CORRIDOR_MARGIN - BORDER_SIZE - 1;
-        public int CorridorHeightMin => CORRIDOR_MARGIN + BORDER_SIZE;
-        public int CorridorHeightMax => _world.Height - CORRIDOR_MARGIN - BORDER_SIZE - 1;
+        public int BuildableCorridorWidthMin => _config.BuildableCorridorPadding + BORDER_SIZE;
+        public int BuildableCorridorWidthMax => _world.Width - _config.BuildableCorridorPadding - BORDER_SIZE - 1;
+        public int BuildableCorridorHeightMin => _config.BuildableCorridorPadding + BORDER_SIZE;
+        public int BuildableCorridorHeightMax => _world.Height - _config.BuildableCorridorPadding - BORDER_SIZE - 1;
 
         public static Tunneler[] CreateRootTunnelers(World world, Config config)
         {
-            //ExtensionUtility.Seed = 513201206;
-
             return config.EnterDatas
                 .Select(data => new MainTunneler(world, config, 0, new Position(data.PosX, data.PosY), data.TunnelSize, data.Direction, data.Direction, true))
                 .ToArray();
@@ -78,7 +75,6 @@ namespace TunnelingAlgorithm
             _config = config;
             _world = world;
             _roomer = new Roomer(world);
-            //System.Diagnostics.Debug.WriteLine($"Roomer Seed : {_roomer.Seed}");
 
             _gen = gen;
 
@@ -379,12 +375,6 @@ namespace TunnelingAlgorithm
 
         protected ((Rect rect, Direction dir)? nextCorridor, (Rect hallRect, SplitPointType type)? hall) GetNextCorridor(Rect currRect, Direction currDir)
         {
-            //var rect = GetNextUsefulRect(currRect, currDir, currDir);
-            //if (rect.HasValue)
-            //    return (rect.Value, currDir);
-
-            //return GetNextCorridorInOtherDirectionWithoutHall(currRect, currDir);
-
             var isScaleUp = _rand.Next(0, 100) < _config.ProbBuildHallFromScaleUp[_gen];
             var isScaleDown = _rand.Next(0, 100) < _config.ProbBuildHallFromScaleDown[_gen] && _tunnelSize > 1;
 
@@ -531,14 +521,14 @@ namespace TunnelingAlgorithm
             var yMin = pivotPos.Y;
 
             var xMax = xMin + _tunnelSize - 1;
-            if (xMax > CorridorWidthMax)
-                xMin -= xMax - CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMin -= xMax - BuildableCorridorWidthMax;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
             return new Position(xMin, yMin);
         }
@@ -549,14 +539,14 @@ namespace TunnelingAlgorithm
             var yMin = pivotPos.Y;
 
             var yMax = yMin + _tunnelSize - 1;
-            if (yMax > CorridorHeightMax)
-                yMin -= yMax - CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMin -= yMax - BuildableCorridorHeightMax;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
             return new Position(xMin, yMin);
         }
@@ -569,14 +559,14 @@ namespace TunnelingAlgorithm
             xMin = xMin - _speed + 1;
 
             var yMax = yMin + _tunnelSize - 1;
-            if (yMax > CorridorHeightMax)
-                yMin -= yMax - CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMin -= yMax - BuildableCorridorHeightMax;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
             return new Position(xMin, yMin);
         }
@@ -587,16 +577,16 @@ namespace TunnelingAlgorithm
             var yMin = pivotPos.Y;
 
             var xMax = xMin + _tunnelSize - 1;
-            if (xMax > CorridorWidthMax)
-                xMin -= xMax - CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMin -= xMax - BuildableCorridorWidthMax;
 
             yMin = yMin - _speed + 1;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
             return new Position(xMin, yMin);
         }     
@@ -623,11 +613,11 @@ namespace TunnelingAlgorithm
             var xMax = minPos.X + width - 1;
             var yMax = minPos.Y + height - 1;
 
-            if (xMax > CorridorWidthMax)
-                xMax = CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMax = BuildableCorridorWidthMax;
 
-            if (yMax > CorridorHeightMax)
-                yMax = CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMax = BuildableCorridorHeightMax;
 
             return new Position(xMax, yMax);
         }
@@ -643,17 +633,17 @@ namespace TunnelingAlgorithm
             var xMax = xMin + _tunnelSize - 1;
             var yMax = yMin + _speed - 1;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
-            if (xMax > CorridorWidthMax)
-                xMax = CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMax = BuildableCorridorWidthMax;
 
-            if (yMax > CorridorHeightMax)
-                yMax = CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMax = BuildableCorridorHeightMax;
 
             return ReadjustCorridorInNorth(new Rect(xMin, yMin, xMax, yMax));
         }
@@ -669,17 +659,17 @@ namespace TunnelingAlgorithm
             var xMax = xMin + _speed - 1;
             var yMax = yMin + _tunnelSize - 1;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
-            if (xMax > CorridorWidthMax)
-                xMax = CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMax = BuildableCorridorWidthMax;
 
-            if (yMax > CorridorHeightMax)
-                yMax = CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMax = BuildableCorridorHeightMax;
 
             return ReadjustCorridorInEast(new Rect(xMin, yMin, xMax, yMax));
         }
@@ -695,17 +685,17 @@ namespace TunnelingAlgorithm
             var xMax = xMin + _speed - 1;
             var yMax = yMin + _tunnelSize - 1;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
-            if (xMax > CorridorWidthMax)
-                xMax = CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMax = BuildableCorridorWidthMax;
 
-            if (yMax > CorridorHeightMax)
-                yMax = CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMax = BuildableCorridorHeightMax;
 
             return ReadjustCorridorInWest(new Rect(xMin, yMin, xMax, yMax));
         }
@@ -721,17 +711,17 @@ namespace TunnelingAlgorithm
             var xMax = xMin + _tunnelSize - 1;
             var yMax = yMin + _speed - 1;
 
-            if (xMin < CorridorWidthMin)
-                xMin = CorridorWidthMin;
+            if (xMin < BuildableCorridorWidthMin)
+                xMin = BuildableCorridorWidthMin;
 
-            if (yMin < CorridorHeightMin)
-                yMin = CorridorHeightMin;
+            if (yMin < BuildableCorridorHeightMin)
+                yMin = BuildableCorridorHeightMin;
 
-            if (xMax > CorridorWidthMax)
-                xMax = CorridorWidthMax;
+            if (xMax > BuildableCorridorWidthMax)
+                xMax = BuildableCorridorWidthMax;
 
-            if (yMax > CorridorHeightMax)
-                yMax = CorridorHeightMax;
+            if (yMax > BuildableCorridorHeightMax)
+                yMax = BuildableCorridorHeightMax;
 
             return ReadjustCorridorInSouth(new Rect(xMin, yMin, xMax, yMax));
         }
@@ -831,55 +821,6 @@ namespace TunnelingAlgorithm
         // TODO : 안좁아지도록 수정
         protected virtual Rect? ReadjustCorridorInNorth(Rect rect)
         {
-            //var newXMin = rect.XMin;
-            //var newXMax = rect.XMax;
-
-            //var neighborYMax = rect.YMax;
-            //for (int y = rect.YMax; y >= rect.YMin; y--)
-            //{
-            //    if (_world.ExitTileTypeAll(rect.XMin, y, rect.XMax, y, TileType.Corridor))
-            //        neighborYMax = y - 1;
-            //}
-
-            //for (int x = 0; x < rect.Width; x++)
-            //{
-            //    var leftTileX = rect.XMin + x;
-            //    var rightTileX = rect.XMax - x;
-
-            //    if (_world.ExitTileTypeAny(leftTileX, rect.YMin, leftTileX, neighborYMax, TileType.Room) || _world.ExitTileTypeAny(rightTileX, rect.YMin, rightTileX, neighborYMax, TileType.Room))
-            //    {
-            //        newXMin = leftTileX + Roomer.BORDER_SIZE + 1;
-            //        newXMax = rightTileX - Roomer.BORDER_SIZE - 1;
-            //    }
-            //    else if ((_world.ExitTileTypeAny(leftTileX, rect.YMin, leftTileX, neighborYMax, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(leftTileX - Roomer.BORDER_SIZE, rect.YMin, leftTileX - Roomer.BORDER_SIZE, neighborYMax, TileType.Room)) ||
-            //             (_world.ExitTileTypeAny(rightTileX, rect.YMin, rightTileX, neighborYMax, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(rightTileX + Roomer.BORDER_SIZE, rect.YMin, rightTileX + Roomer.BORDER_SIZE, neighborYMax, TileType.Room)))
-            //    {
-            //        newXMin = leftTileX + 1;
-            //        newXMax = rightTileX - 1;
-            //    }
-            //}
-
-            //var newWidth = newXMax - newXMin + 1;
-            //if (newWidth < TUNNEL_SIZE_MIN)
-            //    return null;
-
-            //var newYMin = rect.YMin;
-            //var newYMax = rect.YMax;
-
-            //for (int y = rect.YMax; y >= rect.YMin; y--)
-            //{
-            //    if (_world.ExitTileTypeAny(newXMin, y, newXMax, y, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(newXMin, y + Roomer.BORDER_SIZE, newXMax, y + Roomer.BORDER_SIZE, TileType.Room))
-            //        newYMax = y - 1;
-            //    else if (_world.ExitTileTypeAny(newXMin, y, newXMax, y, TileType.Room))
-            //        newYMax = y - Roomer.BORDER_SIZE - 1;
-            //}
-
-            //if (newYMax < newYMin)
-            //    return null;
-
-            //return new Rect(newXMin, newYMin, newXMax, newYMax);
-            //
-
             var newYMin = rect.YMin;
             var newYMax = newYMin - 1;
 
@@ -903,54 +844,6 @@ namespace TunnelingAlgorithm
             
         protected virtual Rect? ReadjustCorridorInEast(Rect rect)
         {
-            //var newYMin = rect.YMin;
-            //var newYMax = rect.YMax;
-
-            //var neighborXMax = rect.XMax;
-            //for (int x = rect.XMax; x >= rect.XMin; x--)  
-            //{
-            //    if (_world.ExitTileTypeAll(x, rect.YMin, x, rect.YMax, TileType.Corridor))
-            //        neighborXMax = x - 1;
-            //}
-
-            //for (int y = 0; y < rect.Height; y++)
-            //{
-            //    var topTileY = rect.YMax - y;
-            //    var bottomTileY = rect.YMin + y;
-
-            //    if (_world.ExitTileTypeAny(rect.XMin, topTileY, neighborXMax, topTileY, TileType.Room) || _world.ExitTileTypeAny(rect.XMin, bottomTileY, neighborXMax, bottomTileY, TileType.Room))
-            //    {
-            //        newYMax = topTileY - Roomer.BORDER_SIZE - 1;
-            //        newYMin = bottomTileY + Roomer.BORDER_SIZE + 1;
-            //    }
-            //    else if ((_world.ExitTileTypeAny(rect.XMin, topTileY, neighborXMax, topTileY, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(rect.XMin, topTileY + Roomer.BORDER_SIZE, neighborXMax, topTileY + Roomer.BORDER_SIZE, TileType.Room)) ||
-            //             (_world.ExitTileTypeAny(rect.XMin, bottomTileY, neighborXMax, bottomTileY, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(rect.XMin, bottomTileY - Roomer.BORDER_SIZE, neighborXMax, bottomTileY - Roomer.BORDER_SIZE, TileType.Room)))
-            //    {
-            //        newYMax = topTileY - 1;
-            //        newYMin = bottomTileY + 1;
-            //    }
-            //}
-
-            //var newHeight = newYMax - newYMin + 1;
-            //if (newHeight < TUNNEL_SIZE_MIN)
-            //    return null;
-
-            //var newXMin = rect.XMin;
-            //var newXMax = rect.XMax;
-
-            //for (int x = rect.XMax; x >= rect.XMin; x--)
-            //{
-            //    if (_world.ExitTileTypeAny(x, newYMin, x, newYMax, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(x + Roomer.BORDER_SIZE, newYMin, x + Roomer.BORDER_SIZE, newYMax, TileType.Room))
-            //        newXMax = x - 1;
-            //    else if (_world.ExitTileTypeAny(x, newYMin, x, newYMax, TileType.Room))
-            //        newXMax = x - Roomer.BORDER_SIZE - 1;
-            //}
-
-            //if (newXMax < newXMin)
-            //    return null;
-
-            //return new Rect(newXMin, newYMin, newXMax, newYMax);
-
             var newXMin = rect.XMin;
             var newXMax = newXMin - 1;
 
@@ -974,54 +867,6 @@ namespace TunnelingAlgorithm
 
         protected virtual Rect? ReadjustCorridorInWest(Rect rect)
         {
-            //var newYMin = rect.YMin;
-            //var newYMax = rect.YMax;
-
-            //var neighborXMin = rect.XMin;
-            //for (int x = rect.XMin; x <= rect.XMax; x++)
-            //{
-            //    if (_world.ExitTileTypeAll(x, rect.YMin, x, rect.YMax, TileType.Corridor))
-            //        neighborXMin = x + 1;
-            //}
-
-            //for (int y = 0; y < rect.Height; y++)
-            //{
-            //    var topTileY = rect.YMax - y;
-            //    var bottomTileY = rect.YMin + y;
-
-            //    if (_world.ExitTileTypeAny(neighborXMin, topTileY, rect.XMax, topTileY, TileType.Room) || _world.ExitTileTypeAny(neighborXMin, bottomTileY, rect.XMax, bottomTileY, TileType.Room))
-            //    {
-            //        newYMin = bottomTileY + Roomer.BORDER_SIZE + 1;
-            //        newYMax = topTileY - Roomer.BORDER_SIZE - 1;
-            //    }
-            //    else if ((_world.ExitTileTypeAny(neighborXMin, topTileY, rect.XMax, topTileY, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(neighborXMin, topTileY + Roomer.BORDER_SIZE, rect.XMax, topTileY + Roomer.BORDER_SIZE, TileType.Room)) ||
-            //             (_world.ExitTileTypeAny(neighborXMin, bottomTileY, rect.XMax, bottomTileY, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(neighborXMin, bottomTileY - Roomer.BORDER_SIZE, rect.XMax, bottomTileY - Roomer.BORDER_SIZE, TileType.Room)))
-            //    {
-            //        newYMax = topTileY - 1;
-            //        newYMin = bottomTileY + 1;
-            //    }
-            //}
-
-            //var newHeight = newYMax - newYMin + 1;
-            //if (newHeight < TUNNEL_SIZE_MIN)
-            //    return null;
-
-            //var newXMin = rect.XMin;
-            //var newXMax = rect.XMax;
-
-            //for (int x = rect.XMin; x <= rect.XMax; x++)
-            //{
-            //    if (_world.ExitTileTypeAny(x, newYMin, x, newYMax, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(x - Roomer.BORDER_SIZE, newYMin, x - Roomer.BORDER_SIZE, newYMax, TileType.Room))
-            //        newXMin = x + 1;
-            //    else if (_world.ExitTileTypeAny(x, newYMin, x, newYMax, TileType.Room))
-            //        newXMin = x + Roomer.BORDER_SIZE + 1;
-            //}
-
-            //if (newXMax < newXMin)
-            //    return null;
-
-            //return new Rect(newXMin, newYMin, newXMax, newYMax);
-
             var newXMax = rect.XMax;
             var newXMin = newXMax + 1;
 
@@ -1045,54 +890,6 @@ namespace TunnelingAlgorithm
 
         protected virtual Rect? ReadjustCorridorInSouth(Rect rect)
         {
-            //var newXMin = rect.XMin;
-            //var newXMax = rect.XMax;
-
-            //var neighborYMin = rect.YMin;
-            //for (int y = rect.YMin; y <= rect.YMax; y++)
-            //{
-            //    if (_world.ExitTileTypeAll(rect.XMin, y, rect.XMax, y, TileType.Corridor))
-            //        neighborYMin = y + 1;
-            //}
-
-            //for (int x = 0; x < rect.Width; x++)
-            //{
-            //    var leftTileX = rect.XMin + x;
-            //    var rightTileX = rect.XMax - x;
-
-            //    if (_world.ExitTileTypeAny(leftTileX, neighborYMin, leftTileX, rect.YMax, TileType.Room) || _world.ExitTileTypeAny(rightTileX, neighborYMin, rightTileX, rect.YMax, TileType.Room))
-            //    {
-            //        newXMax = rightTileX - Roomer.BORDER_SIZE - 1;
-            //        newXMin = leftTileX + Roomer.BORDER_SIZE + 1;
-            //    }
-            //    else if ((_world.ExitTileTypeAny(leftTileX, neighborYMin, leftTileX, rect.YMax, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(leftTileX - Roomer.BORDER_SIZE, neighborYMin, leftTileX - Roomer.BORDER_SIZE, rect.YMax, TileType.Room)) ||
-            //             (_world.ExitTileTypeAny(rightTileX, neighborYMin, rightTileX, rect.YMax, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(rightTileX + Roomer.BORDER_SIZE, neighborYMin, rightTileX + Roomer.BORDER_SIZE, rect.YMax, TileType.Room)))
-            //    {
-            //        newXMax = rightTileX - 1;
-            //        newXMin = leftTileX + 1;
-            //    }
-            //}
-
-            //var newWidth = newXMax - newXMin + 1;
-            //if (newWidth < TUNNEL_SIZE_MIN)
-            //    return null;
-
-            //var newYMin = rect.YMin;
-            //var newYMax = rect.YMax;
-
-            //for (int y = rect.YMin; y <= rect.YMax; y++)
-            //{
-            //    if (_world.ExitTileTypeAny(newXMin, y, newXMax, y, TileType.Wall, TileType.Door) && _world.ExitTileTypeAny(newXMin, y - Roomer.BORDER_SIZE, newXMax, y - Roomer.BORDER_SIZE, TileType.Room))
-            //        newYMin = y + 1;
-            //    else if (_world.ExitTileTypeAny(newXMin, y, newXMax, y, TileType.Room))
-            //        newYMin = y + Roomer.BORDER_SIZE + 1;
-            //}
-
-            //if (newYMax < newYMin)
-            //    return null;
-
-            //return new Rect(newXMin, newYMin, newXMax, newYMax);
-
             var newYMax = rect.YMax;
             var newYMin = newYMax + 1;
 

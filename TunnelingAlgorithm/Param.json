@@ -1,5 +1,5 @@
 {
-  "CorridorMargin": 5,
+  "BuildableCorrdiorPadding": 3,
 
   "GenerationCount": 7,
 
@@ -14,7 +14,7 @@
 
   "JoinTunnelerSize": 1,
 
-  "Prob_BornTunneler": [ 35, 35, 45, 45, 35, 25, 25],
+  "Prob_BornTunneler": [ 35, 35, 45, 45, 35, 25, 25 ],
 
   "Prob_ChangeJoinTunneler": [ 0, 100, 100, 0, 0, 5 ],
 

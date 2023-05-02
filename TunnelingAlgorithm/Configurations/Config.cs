@@ -9,8 +9,8 @@ namespace TunnelingAlgorithm.Configurations
         [JsonProperty("UtilitySeed")]
         public int UtilitySeed { get; protected set; }
 
-        [JsonProperty("CorrdiorMargin")]
-        public int CorridorMargin { get; protected set; }
+        [JsonProperty("BuildableCorrdiorPadding")]
+        public int BuildableCorridorPadding { get; protected set; }
 
         [JsonProperty("GenerationCount")]
         public int GenerationCount { get; protected set; }

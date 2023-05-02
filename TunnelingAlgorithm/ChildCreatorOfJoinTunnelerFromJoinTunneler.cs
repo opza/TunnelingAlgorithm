@@ -6,9 +6,9 @@ using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
 {
-    internal class ChilderJoinTunnelerFromMainTunneler : Childer<JoinTunneler, MainTunneler>
+    internal class ChildCreatorOfJoinTunnelerFromJoinTunneler : ChildCreator<JoinTunneler, JoinTunneler>
     {
-        public ChilderJoinTunnelerFromMainTunneler(MainTunneler parent, int? seed = null) : base(parent, seed)
+        public ChildCreatorOfJoinTunnelerFromJoinTunneler(JoinTunneler parent, int? seed = null) : base(parent, seed)
         {
         }
 

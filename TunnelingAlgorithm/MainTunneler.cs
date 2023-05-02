@@ -8,8 +8,8 @@ namespace TunnelingAlgorithm
 {
     internal class MainTunneler : Tunneler
     {
-        ChilderMainTunnelerFromMainTunneler _childerMainTunneler;
-        ChilderJoinTunnelerFromMainTunneler _childerJoinTunneler;
+        ChildCreatorOfMainTunnelerFromMainTunneler _childCreatorOfMainTunneler;
+        ChildCreatorOfJoinTunnelerFromMainTunneler _childCreatorJoinTunneler;
 
         Direction _rootDir;
         int _straightCount;
@@ -20,8 +20,8 @@ namespace TunnelingAlgorithm
         public MainTunneler(World world, Config config, int gen, Position startPivot, int tunnelSize, Direction rootDir, Direction dir, bool hasEnterSplitPoint = false, int? seed = null)
             : base(world, config, gen, startPivot, tunnelSize, dir, seed)
         {
-            _childerMainTunneler = new ChilderMainTunnelerFromMainTunneler(this);
-            _childerJoinTunneler = new ChilderJoinTunnelerFromMainTunneler(this);
+            _childCreatorOfMainTunneler = new ChildCreatorOfMainTunnelerFromMainTunneler(this);
+            _childCreatorJoinTunneler = new ChildCreatorOfJoinTunnelerFromMainTunneler(this);
 
             _hasEnterSplitPoint = hasEnterSplitPoint;
             _rootDir = rootDir;
@@ -129,14 +129,14 @@ namespace TunnelingAlgorithm
         public override Tunneler CreateChild(int? seed = null)
         {
             if (_rand.Next(0, 100) < _config.ProbChangeJoinTunneler[_gen])
-                return _childerJoinTunneler.CreateChild(seed);
+                return _childCreatorJoinTunneler.CreateChild(seed);
 
-            return _childerMainTunneler.CreateChild(seed);
+            return _childCreatorOfMainTunneler.CreateChild(seed);
         }
 
-        public override Tunneler[] CreateScaleUpChilds(int? seed = null) => _childerMainTunneler.CreateChildAll(SplitPointType.ScaleUp, _tunnelSize + 2, seed);
+        public override Tunneler[] CreateScaleUpChilds(int? seed = null) => _childCreatorOfMainTunneler.CreateChildAll(SplitPointType.ScaleUp, _tunnelSize + 2, seed);
 
-        public override Tunneler[] CreateScaleDownChilds(int? seed = null) => _childerMainTunneler.CreateChildAll(SplitPointType.ScaleDown, _tunnelSize - 2, seed);
+        public override Tunneler[] CreateScaleDownChilds(int? seed = null) => _childCreatorOfMainTunneler.CreateChildAll(SplitPointType.ScaleDown, _tunnelSize - 2, seed);
 
         protected override Direction[] GetCandidatedDirections(Direction currDir)
         {
@@ -153,147 +153,5 @@ namespace TunnelingAlgorithm
 
             return candidatedDirs.ToArray();
         }
-
-        //MainTunneler CreateChildMainTunneler(int? seed)
-        //{
-        //    if (_splitPoints.Count <= 0)
-        //        return null;
-
-        //    var candidatedSplitPoints = new List<SplitPoint>(_splitPoints);
-        //    candidatedSplitPoints.Shuffle();
-
-        //    foreach (var splitPoint in candidatedSplitPoints)
-        //    {
-        //        var dirs = Enum.GetValues<Direction>().ToList();
-        //        dirs.Remove(GetReverseDirection(_rootDir));
-        //        dirs.Shuffle();
-
-        //        foreach (var dir in dirs)
-        //        {
-        //            if (splitPoint[dir] == ConnectState.Connected)
-        //                continue;
-
-        //            var childTunnelSize = _tunnelSize;
-
-        //            var widthHalf = childTunnelSize / 2;
-        //            var heightHalf = childTunnelSize / 2;
-
-        //            var pivot = new Position();
-        //            switch (dir)
-        //            {
-        //                case Direction.North:
-        //                    pivot = new Position(splitPoint.Rect.CenterX - widthHalf, splitPoint.YMax + 1);
-        //                    break;
-        //                case Direction.East:
-        //                    pivot = new Position(splitPoint.XMax + 1, splitPoint.Rect.CenterY - heightHalf);
-        //                    break;
-        //                case Direction.West:
-        //                    pivot = new Position(splitPoint.XMin - 1, splitPoint.Rect.CenterY - heightHalf);
-        //                    break;
-        //                case Direction.South:
-        //                    pivot = new Position(splitPoint.Rect.CenterX - widthHalf, splitPoint.YMin - 1);
-        //                    break;
-        //            }
-
-        //            if (pivot.X < WidthMin || pivot.X > WidthMax || pivot.Y < HeightMin || pivot.Y > HeightMax)
-        //                continue;
-
-        //            splitPoint[dir] = ConnectState.Connected;
-
-        //            return new MainTunneler(_world, _config, _gen + 1, pivot, childTunnelSize, _rootDir, dir, false, seed);
-
-        //        }
-        //    }
-
-        //    return null;
-        //}
-
-        //MainTunneler[] CreateChildsMainTunneler(SplitPointType type, int childTunnelSize, int? seed = null)
-        //{
-        //    var childs = new List<MainTunneler>();
-
-        //    if (_splitPoints.Count <= 0 || childTunnelSize <= 0)
-        //        return childs.ToArray();
-
-        //    var candidatedSplitPoints = _splitPoints.Where(splitPoint => splitPoint.Type == type).ToList();
-        //    candidatedSplitPoints.Shuffle();
-
-        //    foreach (var splitPoint in candidatedSplitPoints)
-        //    {
-        //        foreach (var dir in Enum.GetValues<Direction>())
-        //        {
-        //            if (splitPoint[dir] == ConnectState.Connected)
-        //                continue;
-
-        //            var widthHalf = childTunnelSize / 2;
-        //            var heightHalf = childTunnelSize / 2;
-
-        //            var pivot = new Position();
-        //            switch (dir)
-        //            {
-        //                case Direction.North:
-        //                    pivot = new Position(splitPoint.Rect.CenterX - widthHalf, splitPoint.YMax + 1);
-        //                    break;
-        //                case Direction.East:
-        //                    pivot = new Position(splitPoint.XMax + 1, splitPoint.Rect.CenterY - heightHalf);
-        //                    break;
-        //                case Direction.West:
-        //                    pivot = new Position(splitPoint.XMin - 1, splitPoint.Rect.CenterY - heightHalf);
-        //                    break;
-        //                case Direction.South:
-        //                    pivot = new Position(splitPoint.Rect.CenterX - widthHalf, splitPoint.YMin - 1);
-        //                    break;
-        //            }
-
-        //            if (pivot.X < WidthMin || pivot.X > WidthMax || pivot.Y < HeightMin || pivot.Y > HeightMax)
-        //                continue;
-
-        //            splitPoint[dir] = ConnectState.Connected;
-
-        //            childs.Add(new MainTunneler(_world, _config, _gen + 1, pivot, childTunnelSize, _rootDir, dir, false, seed));
-
-        //        }
-        //    }
-
-        //    return childs.ToArray();
-        //}   
-
-        //JoinTunneler CreateChildJoinTunneler(int? seed)
-        //{
-        //    if (_splitPoints.Count <= 0)
-        //        return null;
-
-        //    var candidatedSplitPoints = new List<SplitPoint>(_splitPoints);
-        //    candidatedSplitPoints.Shuffle();
-
-        //    foreach (var splitPoint in candidatedSplitPoints)
-        //    {
-        //        var dirs = Enum.GetValues<Direction>();
-        //        dirs.Shuffle();
-
-        //        foreach (var dir in dirs)
-        //        {
-        //            if (splitPoint[dir] == ConnectState.Connected)
-        //                continue;
-
-        //            var pivot = dir switch
-        //            {
-        //                Direction.North => _rand.Next(0, 2) == 0 ? new Position(splitPoint.XMin, splitPoint.YMax + 1) : new Position(splitPoint.XMax - _config.JoinTunnelerSize + 1, splitPoint.YMax + 1),
-        //                Direction.East => _rand.Next(0, 2) == 0 ? new Position(splitPoint.XMax + 1, splitPoint.YMin) : new Position(splitPoint.XMax + 1, splitPoint.YMax - _config.JoinTunnelerSize + 1),
-        //                Direction.West => _rand.Next(0, 2) == 0 ? new Position(splitPoint.XMin - 1, splitPoint.YMin) : new Position(splitPoint.XMin - 1, splitPoint.YMax - _config.JoinTunnelerSize + 1),
-        //                Direction.South => _rand.Next(0, 2) == 0 ? new Position(splitPoint.XMin, splitPoint.YMin - 1) : new Position(splitPoint.XMax - _config.JoinTunnelerSize + 1, splitPoint.YMin - 1)
-        //            };
-
-        //            if (pivot.X < WidthMin || pivot.X > WidthMax || pivot.Y < HeightMin || pivot.Y > HeightMax)
-        //                continue;
-
-        //            splitPoint[dir] = ConnectState.Connected;
-
-        //            return new JoinTunneler(_world, _config, _gen + 1, pivot, dir, seed);
-        //        }
-        //    }
-
-        //    return null;
-        //}
     }
 }
