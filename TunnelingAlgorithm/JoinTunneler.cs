@@ -14,7 +14,7 @@ namespace TunnelingAlgorithm
 
         int _straightCount;
 
-        public JoinTunneler(World world, Config config, int gen, Position startPivot, Direction dir, int? seed) : base(world, config, gen, startPivot, config.JoinTunnelerSize, dir, seed)
+        public JoinTunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, Direction dir, int? seed) : base(world, config, buildedRooms, gen, startPivot, config.JoinTunnelerSize, dir, seed)
         {
             _childCreatorOfMainTunneler = new ChildCreatorOfMainTunnelerFromJoinTunneler(this);
             _childCreatorOfJoinTunneler = new ChildCreatorOfJoinTunnelerFromJoinTunneler(this);

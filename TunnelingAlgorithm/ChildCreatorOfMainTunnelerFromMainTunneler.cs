@@ -61,7 +61,7 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    return new MainTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed);
+                    return new MainTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed);
 
                 }
             }
@@ -112,7 +112,7 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    childs.Add(new MainTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed));
+                    childs.Add(new MainTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed));
 
                 }
             }

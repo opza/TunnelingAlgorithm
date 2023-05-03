@@ -14,6 +14,21 @@ namespace TunnelingAlgorithm
         South
     }
 
+    public enum RoomType
+    {
+        None,
+        Office,
+        Lab,
+        Restaurant,
+        Warehouse,
+        Isolation,
+        Security,
+        Communication,
+        Rest,
+        Infirmary,
+        launchSite
+    }
+
     internal class World
     {
         int _width;

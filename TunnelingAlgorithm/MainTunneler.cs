@@ -17,8 +17,8 @@ namespace TunnelingAlgorithm
 
         public Direction RootDir => _rootDir;
 
-        public MainTunneler(World world, Config config, int gen, Position startPivot, int tunnelSize, Direction rootDir, Direction dir, bool hasEnterSplitPoint = false, int? seed = null)
-            : base(world, config, gen, startPivot, tunnelSize, dir, seed)
+        public MainTunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, int tunnelSize, Direction rootDir, Direction dir, bool hasEnterSplitPoint = false, int? seed = null)
+            : base(world, config, buildedRooms, gen, startPivot, tunnelSize, dir, seed)
         {
             _childCreatorOfMainTunneler = new ChildCreatorOfMainTunnelerFromMainTunneler(this);
             _childCreatorJoinTunneler = new ChildCreatorOfJoinTunnelerFromMainTunneler(this);

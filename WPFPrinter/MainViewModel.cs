@@ -1,6 +1,7 @@
 ﻿
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
@@ -13,8 +14,6 @@ namespace WPFPrinter
         const string PARAM_PATH = "D:\\Code\\TunnelingAlgorithm\\TunnelingAlgorithm\\Param.json";
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
-        WorldGenerator _generator = new WorldGenerator();
 
         int _worldWidth = 150;
         int _worldHeight = 150;
@@ -34,7 +33,7 @@ namespace WPFPrinter
 
         void GenerateWorld()
         {
-            var tiles = _generator.Generate(_worldWidth, _worldHeight, PARAM_PATH);
+            (var tiles, var roomDatas) = WorldGenerator.Generate(_worldWidth, _worldHeight, PARAM_PATH);
             var emptyTileCount = 0f;
 
             for (int y = 0; y < _worldHeight; y++)
@@ -43,7 +42,7 @@ namespace WPFPrinter
                 {
                     var tile = tiles[x, _worldHeight - y - 1];
                     Color color;
-                    switch (tile.Type)
+                    switch (tile)
                     {
                         case TileType.Rock:
                             color = Color.Brown;
@@ -73,6 +72,11 @@ namespace WPFPrinter
 
             OnPropertyChanged(nameof(EmptyPercentage));
             OnPropertyChanged(nameof(BitmapImage));
+
+            foreach (var roomData in roomDatas)
+            {
+                Debug.WriteLine($"{roomData.RoomType} : {roomData.Count}");
+            }
         }
 
 

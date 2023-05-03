@@ -32,7 +32,25 @@ namespace TunnelingAlgorithm
             _world = world;
         }
 
-        public bool Build(Position pivot, int widthMin, int widthMax, int heightMin, int heightMax, Direction doorDir, bool aligned = false)
+        public Rect? Build(Position pivot, int width, int height, Direction doorDir, bool aligned = false)
+        {
+            var roomRect = GetRoomRect(pivot, width, height, doorDir);
+            if (!ValidPosition(roomRect.XMin, roomRect.YMin) || !ValidPosition(roomRect.XMax, roomRect.YMax))
+                return null;
+
+            if (_world.ExitTileTypeAny(roomRect, TileType.Corridor, TileType.Room, TileType.Wall, TileType.Door))
+                return null;
+
+            BuildRoom(roomRect);
+            BuildBorder(roomRect);
+
+            var doorTile = GetDoorTile(roomRect, doorDir, aligned);
+            BuildDoor(doorTile);
+
+            return roomRect;
+        }
+
+        public Rect? BuildWithAdjustable(Position pivot, int widthMin, int widthMax, int heightMin, int heightMax, Direction doorDir, bool aligned = false)
         {
             var roomWidth = _rand.Next(widthMin, widthMax + 1);
             var roomHeight = _rand.Next(heightMin, heightMax + 1);
@@ -58,7 +76,7 @@ namespace TunnelingAlgorithm
             }
 
             if (!adjustedRect.HasValue)
-                return false;
+                return null;
 
             BuildRoom(adjustedRect.Value);
             BuildBorder(adjustedRect.Value);
@@ -66,7 +84,7 @@ namespace TunnelingAlgorithm
             var doorTile = GetDoorTile(adjustedRect.Value, doorDir, aligned);
             BuildDoor(doorTile);
 
-            return true;
+            return adjustedRect;
         }
 
         void BuildRoom(Rect rect) => BuildRoom(rect.XMin, rect.YMin, rect.XMax, rect.YMax);

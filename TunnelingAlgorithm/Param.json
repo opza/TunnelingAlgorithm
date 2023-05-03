@@ -16,11 +16,11 @@
 
   "Prob_BornTunneler": [ 35, 35, 45, 45, 35, 25, 25 ],
 
-  "Prob_ChangeJoinTunneler": [ 0, 100, 100, 0, 0, 5 ],
-
-  "Count_BornTunnelerMin": [ 2, 3, 5, 5, 3, 2, 2 ],
+  "Prob_ChangeJoinTunneler": [ 0, 100, 90, 0, 5, 5 ],
 
   "Prob_ChangeDirection": [ 40, 30, 55, 45, 30, 30, 30 ],
+
+  "Count_BornTunnelerMin": [ 2, 3, 5, 5, 3, 2, 2 ],
 
   "CorridorMinDist": [ 10, 7, 5, 5, 7, 7, 5 ],
 
@@ -34,12 +34,39 @@
 
   "Prob_BuildHallFromCorner": [ 10, 10, 20, 20, 20, 20, 20 ],
 
-  "Prob_BuildRoom": [ 5, 5, 5, 5, 15, 5, 5 ],
+  "Prob_BuildRoom": [ 5, 5, 5, 15, 15, 15, 5 ],
 
-  "RoomSize": {
-    "widthMin": 5,
-    "widthMax": 12,
-    "heightMin": 5,
-    "heightMax": 12
-  }
+  "Rooms": [
+    {
+      "RoomType": 1,
+      "Count": 20,
+      "Width": 5,
+      "Height": 5
+    },
+    {
+      "RoomType": 2,
+      "Count": 10,
+      "Width": 8,
+      "Height": 8
+    },
+    {
+      "RoomType": 3,
+      "Count": 5,
+      "Width": 12,
+      "Height": 12
+    },
+    {
+      "RoomType": 4,
+      "Count": 10,
+      "Width": 5,
+      "Height": 5
+    },
+    {
+      "RoomType": 4,
+      "Count": 3,
+      "Width": 15,
+      "Height": 15
+    }
+  ]
+
 }

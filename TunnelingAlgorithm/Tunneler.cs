@@ -36,6 +36,8 @@ namespace TunnelingAlgorithm
         protected List<Tunneler> childs = new List<Tunneler>();
         protected List<SplitPoint> _splitPoints = new List<SplitPoint>();
 
+        protected RoomData[] _buildedRooms;
+
         protected bool HasCorridor => _maxLife != _currLife;
         public int MaxLife => _maxLife;
         public bool Alive => _currLife > 0;
@@ -46,6 +48,8 @@ namespace TunnelingAlgorithm
         public World World => _world;
         public Config Config => _config;
         public SplitPoint[] SplitPoints => _splitPoints.ToArray();
+
+        public RoomData[] BuildedRooms => _buildedRooms;
 
         public int WidthMin => BORDER_SIZE;
         public int WidthMax => _world.Width - BORDER_SIZE - 1;
@@ -59,12 +63,14 @@ namespace TunnelingAlgorithm
 
         public static Tunneler[] CreateRootTunnelers(World world, Config config)
         {
+            var buildedRooms = config.RoomConfigs.Select(roomConfig => new RoomData(roomConfig.RoomType, roomConfig.Width, roomConfig.Height)).ToArray();
+
             return config.EnterDatas
-                .Select(data => new MainTunneler(world, config, 0, new Position(data.PosX, data.PosY), data.TunnelSize, data.Direction, data.Direction, true))
+                .Select(data => new MainTunneler(world, config, buildedRooms, 0, new Position(data.PosX, data.PosY), data.TunnelSize, data.Direction, data.Direction, true))
                 .ToArray();
         }
 
-        protected Tunneler(World world, Config config, int gen, Position startPivot, int tunnelSize, Direction dir, int? seed)
+        protected Tunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, int tunnelSize, Direction dir, int? seed)
         {
             if (seed.HasValue)
                 _seed = seed.Value;
@@ -88,6 +94,8 @@ namespace TunnelingAlgorithm
 
             _startDir = dir;
             _currCorridor = (new Rect(), dir);
+
+            _buildedRooms = buildedRooms;
         }
 
         public abstract void BuildCorridor(bool hasTailRoom);
@@ -99,14 +107,18 @@ namespace TunnelingAlgorithm
 
         public bool BuildRoom(bool aligned = false)
         {
-            var candidatedSplitPoints = new List<SplitPoint>(_splitPoints);
+            var roomConfig = GetCandidatedRoomConfigs().GetRandomElementOrDefualt();
+            if (roomConfig == null)
+                return false;
+
+            var candidatedSplitPoints = new List<SplitPoint>(_splitPoints.Where(splitPoint => splitPoint.NonConnectedCount > 0));
             candidatedSplitPoints.Shuffle();
 
             foreach (var splitPoint in candidatedSplitPoints)
-            {
+            {   
                 var dirs = Enum.GetValues(typeof(Direction))
-                    .ToEnumerable<Direction>()
-                    .ToArray();
+                .ToEnumerable<Direction>()
+                .ToList();
 
                 dirs.Shuffle();
 
@@ -118,40 +130,126 @@ namespace TunnelingAlgorithm
                     var doorDir = GetReverseDirection(dir);
                     var pivot = GetRoomPivot(splitPoint, doorDir);
 
-                    var buildSuccess = _roomer.Build(pivot, _config.RoomSizeData.WidthMin, _config.RoomSizeData.WidthMax, _config.RoomSizeData.HeightMin, _config.RoomSizeData.HeightMax, doorDir, aligned);
-                    if (!buildSuccess)
-                        continue;
+                    var roomRect = _roomer.Build(pivot, roomConfig.Width, roomConfig.Height, doorDir, aligned);
+                    if (roomRect.HasValue)
+                    {
+                        splitPoint[dir] = ConnectState.Connected;
 
-                    splitPoint[dir] = ConnectState.Connected;
-                    return true;
+                        var roomData = _buildedRooms.FirstOrDefault(buildedRoom => buildedRoom.RoomType == roomConfig.RoomType && buildedRoom.Width == roomConfig.Width && buildedRoom.Height == roomConfig.Height);
+                        roomData.AddPosition(roomRect.Value.XMin, roomRect.Value.YMin);
+
+                        return true;
+                    }
                 }
+    
             }
 
             return false;
+
+            //var candidatedSplitPoints = new List<SplitPoint>(_splitPoints);
+            //candidatedSplitPoints.Shuffle();
+
+            //foreach (var splitPoint in candidatedSplitPoints)
+            //{
+            //    var dirs = Enum.GetValues(typeof(Direction))
+            //        .ToEnumerable<Direction>()
+            //        .ToArray();
+
+            //    dirs.Shuffle();
+
+            //    foreach (var dir in dirs)
+            //    {
+            //        if (splitPoint[dir] == ConnectState.Connected)
+            //            continue;
+
+            //        var doorDir = GetReverseDirection(dir);
+            //        var pivot = GetRoomPivot(splitPoint, doorDir);
+
+            //        var buildSuccess = _roomer.Build(pivot,, doorDir, aligned);
+            //        if (!buildSuccess)
+            //            continue;
+
+            //        splitPoint[dir] = ConnectState.Connected;
+            //        return true;
+            //    }
+            //}
+
+            //return false;
         }
 
         public void BuildRoomAll(bool aligned = false)
         {
-            foreach (var splitPoint in _splitPoints)
+            var candidatedRoomConfigs = GetCandidatedRoomConfigs().ToList();
+            candidatedRoomConfigs.Shuffle();         
+
+            foreach (var roomConfig in candidatedRoomConfigs)
             {
-                var dirs = Enum.GetValues(typeof(Direction))
-                    .ToEnumerable<Direction>();
-
-                foreach (var dir in dirs)
+                var roomData = _buildedRooms.FirstOrDefault(buildedRoom => buildedRoom.RoomType == roomConfig.RoomType && buildedRoom.Width == roomConfig.Width && buildedRoom.Height == roomConfig.Height);
+                var buildLeftCount = roomConfig.Count - roomData.Count;
+                for (int i = 0; i < buildLeftCount; i++)
                 {
-                    if (splitPoint[dir] == ConnectState.Connected)
-                        continue;
+                    var candidatedSplitPoints = new List<SplitPoint>(_splitPoints.Where(splitPoint => splitPoint.NonConnectedCount > 0));
+                    candidatedSplitPoints.Shuffle();
 
-                    var doorDir = GetReverseDirection(dir);
-                    var pivot = GetRoomPivot(splitPoint, doorDir);
+                    foreach (var splitPoint in candidatedSplitPoints)
+                    {
+                        var dirs = Enum.GetValues(typeof(Direction))
+                        .ToEnumerable<Direction>()
+                        .ToList();
 
-                    var buildSuccess = _roomer.Build(pivot, _config.RoomSizeData.WidthMin, _config.RoomSizeData.WidthMax, _config.RoomSizeData.HeightMin, _config.RoomSizeData.HeightMax, doorDir, aligned);
-                    if (!buildSuccess)
-                        continue;
+                        dirs.Shuffle();
 
-                    splitPoint[dir] = ConnectState.Connected;
+                        var buildSuccess = false;
+                        foreach (var dir in dirs)
+                        {
+                            if (splitPoint[dir] == ConnectState.Connected)
+                                continue;
+
+                            var doorDir = GetReverseDirection(dir);
+                            var pivot = GetRoomPivot(splitPoint, doorDir);
+
+                            var roomRect = _roomer.Build(pivot, roomConfig.Width, roomConfig.Height, doorDir, aligned);
+                            if (roomRect.HasValue)
+                            {
+                                splitPoint[dir] = ConnectState.Connected;
+
+                                roomData.AddPosition(roomRect.Value.XMin, roomRect.Value.YMin);
+
+                                buildSuccess = true;
+                                break;
+                            }
+                        }
+
+                        if (buildSuccess)
+                            break;
+                    }
                 }
+
+                
             }
+
+            //foreach (var splitPoint in candidatedSplitPoints)
+            //{
+            //    var dirs = Enum.GetValues(typeof(Direction))
+            //        .ToEnumerable<Direction>();
+
+            //    foreach (var dir in dirs)
+            //    {
+            //        if (splitPoint[dir] == ConnectState.Connected)
+            //            continue;
+
+                    
+
+            //        var doorDir = GetReverseDirection(dir);
+            //        var pivot = GetRoomPivot(splitPoint, doorDir);
+
+            //        var buildSuccess = _roomer.Build(pivot, _config.RoomSizeData.WidthMin, _config.RoomSizeData.WidthMax, _config.RoomSizeData.HeightMin, _config.RoomSizeData.HeightMax, doorDir, aligned);
+            //        if (!buildSuccess)
+            //            continue;
+
+            //        splitPoint[dir] = ConnectState.Connected;
+            //    }
+            //}
         }
 
         protected bool BuildRoom(SplitPoint splitPoint, bool aligned = false)
@@ -168,11 +266,9 @@ namespace TunnelingAlgorithm
                     continue;
 
                 var doorDir = GetReverseDirection(dir);
-                var buildSuccess = BuildRoom(splitPoint, doorDir, aligned);
-                if(!buildSuccess)
-                    continue;
-
-                return true;
+                var buildSuccess = BuildRoom(splitPoint,  doorDir, aligned);
+                if (buildSuccess)
+                    return true;
             }
 
             return false;
@@ -180,8 +276,27 @@ namespace TunnelingAlgorithm
 
         protected bool BuildRoom(SplitPoint splitPoint, Direction doorDir, bool aligned = false)
         {
+            var dir = GetReverseDirection(doorDir);
+            if (splitPoint[dir] == ConnectState.Connected)
+                return false;
+
             var pivot = GetRoomPivot(splitPoint, doorDir);
-            return _roomer.Build(pivot, _config.RoomSizeData.WidthMin, _config.RoomSizeData.WidthMax, _config.RoomSizeData.HeightMin, _config.RoomSizeData.HeightMax, doorDir, aligned);
+            var roomConfig = GetCandidatedRoomConfigs().GetRandomElementOrDefualt();
+            if (roomConfig == null)
+                return false;
+
+            var roomRect = _roomer.Build(pivot, roomConfig.Width, roomConfig.Height, doorDir, aligned);
+            if (roomRect.HasValue)
+            {
+                splitPoint[dir] = ConnectState.Connected;
+
+                var roomData = _buildedRooms.FirstOrDefault(buildedRoom => buildedRoom.RoomType == roomConfig.RoomType && buildedRoom.Width == roomConfig.Width && buildedRoom.Height == roomConfig.Height);
+                roomData.AddPosition(roomRect.Value.XMin, roomRect.Value.YMin);
+
+                return true;
+            }
+
+            return false;
         }       
 
         protected Position GetRoomPivot(SplitPoint splitPoint, Direction doorDir) => doorDir switch
@@ -191,6 +306,10 @@ namespace TunnelingAlgorithm
             Direction.West => new Position(splitPoint.XMax + BORDER_SIZE + 1, splitPoint.Rect.CenterY),
             Direction.South => new Position(splitPoint.Rect.CenterX, splitPoint.YMax + BORDER_SIZE + 1)
         };
+
+        protected RoomConfig[] GetCandidatedRoomConfigs() => _config.RoomConfigs
+            .Where(roomConfig => _buildedRooms.Any(roomData => roomConfig.RoomType == roomData.RoomType && roomConfig.Width == roomData.Width && roomConfig.Height == roomData.Height && roomConfig.Count > roomData.Count))
+            .ToArray();
 
         protected void BuildCorridor(Rect rect) => BuildCorridor(rect.XMin, rect.YMin, rect.XMax, rect.YMax);
 

@@ -54,8 +54,8 @@ namespace TunnelingAlgorithm.Configurations
         [JsonProperty("Prob_BuildRoom")]
         public int[] ProbBuildRoom { get; protected set; }
 
-        [JsonProperty("RoomSize")]
-        public RoomSizeData RoomSizeData { get; protected set; }
+        [JsonProperty("Rooms")]
+        public RoomConfig[] RoomConfigs { get; protected set; }
 
         public static Config Read(string path)
         {

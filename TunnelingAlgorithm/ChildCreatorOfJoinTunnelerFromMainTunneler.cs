@@ -46,7 +46,7 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    return new JoinTunneler(_parent.World, _parent.Config, _parent.Generation + 1, pivot, dir, childSeed);
+                    return new JoinTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, dir, childSeed);
                 }
             }
 
