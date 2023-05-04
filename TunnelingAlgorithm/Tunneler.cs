@@ -76,7 +76,7 @@ namespace TunnelingAlgorithm
 
             _config = config;
             _world = world;
-            _roomer = new Roomer(world);
+            _roomer = new Roomer(world, _rand.Next());
 
             _gen = gen;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using OpzaUtil.Linq;
 
 namespace TunnelingAlgorithm
@@ -11,30 +12,23 @@ namespace TunnelingAlgorithm
         Random _rand;
         World _world;
 
-        int _seed;
-
         int WidthMin => BORDER_SIZE;
         int WidthMax => _world.Width - BORDER_SIZE - 1;
         int HeightMin => BORDER_SIZE;
         int HeightMax => _world.Height - BORDER_SIZE - 1;
 
-        public int Seed => _seed;
 
-
-        public Roomer(World world, int? seed = null)
+        public Roomer(World world, int seed)
         {
-            if (seed.HasValue)
-                _seed = seed.Value;
-            else
-                _seed = new Random().Next();
-
-            _rand = new Random(_seed);
+            _rand = new Random(seed);
             _world = world;
         }
 
         public Rect? Build(Position pivot, int width, int height, Direction doorDir, bool aligned = false)
         {
             var roomRect = GetRoomRect(pivot, width, height, doorDir);
+            //Debug.WriteLine($"{roomRect.Width} {roomRect.Height}, {width} {height}, {doorDir}");
+
             if (!ValidPosition(roomRect.XMin, roomRect.YMin) || !ValidPosition(roomRect.XMax, roomRect.YMax))
                 return null;
 
@@ -167,7 +161,7 @@ namespace TunnelingAlgorithm
             var heightHalf = height / 2;
 
             var yMin = pivot.Y - heightHalf;
-            var yMax = pivot.Y + height - 1;
+            var yMax = yMin + height - 1;
 
             var xMax = pivot.X;
             var xMin = pivot.X - width + 1;
@@ -180,7 +174,7 @@ namespace TunnelingAlgorithm
             var heightHalf = height / 2;
 
             var yMin = pivot.Y - heightHalf;
-            var yMax = pivot.Y + height - 1;
+            var yMax = yMin + height - 1;
 
             var xMin = pivot.X;
             var xMax = xMin + width - 1;
