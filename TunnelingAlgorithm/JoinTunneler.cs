@@ -14,10 +14,10 @@ namespace TunnelingAlgorithm
 
         int _straightCount;
 
-        public JoinTunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, Direction dir, int? seed) : base(world, config, buildedRooms, gen, startPivot, config.JoinTunnelerSize, dir, seed)
+        public JoinTunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, Direction dir, int seed) : base(world, config, buildedRooms, gen, startPivot, config.JoinTunnelerSize, dir, seed)
         {
-            _childCreatorOfMainTunneler = new ChildCreatorOfMainTunnelerFromJoinTunneler(this);
-            _childCreatorOfJoinTunneler = new ChildCreatorOfJoinTunnelerFromJoinTunneler(this);
+            _childCreatorOfMainTunneler = new ChildCreatorOfMainTunnelerFromJoinTunneler(this, _rand.Next());
+            _childCreatorOfJoinTunneler = new ChildCreatorOfJoinTunnelerFromJoinTunneler(this, _rand.Next());
         }
 
         public override void BuildCorridor(bool hasTailRoom)
@@ -135,17 +135,27 @@ namespace TunnelingAlgorithm
 
         }
 
-        public override Tunneler CreateChild(int? seed = null)
+        public override Tunneler CreateChild()
         {
-            if (_rand.Next(0, 100) < _config.ProbChangeJoinTunneler[_gen])
-                return _childCreatorOfJoinTunneler.CreateChild(seed);
+            var childSeed = _rand.Next();
 
-            return _childCreatorOfMainTunneler.CreateChild(seed);
+            if (_rand.Next(0, 100) < _config.ProbChangeJoinTunneler[_gen])
+                return _childCreatorOfJoinTunneler.CreateChild(childSeed);
+
+            return _childCreatorOfMainTunneler.CreateChild(childSeed);
         }
 
-        public override Tunneler[] CreateScaleUpChilds(int? seed = null) => _childCreatorOfMainTunneler.CreateChildAll(SplitPointType.ScaleUp, _tunnelSize + 2, seed);
+        public override Tunneler[] CreateScaleUpChilds()
+        {
+            var childSeed = _rand.Next();
+            return _childCreatorOfMainTunneler.CreateChildAll(SplitPointType.ScaleUp, _tunnelSize + 2, childSeed);
+        }
 
-        public override Tunneler[] CreateScaleDownChilds(int? seed = null) => _childCreatorOfMainTunneler.CreateChildAll(SplitPointType.ScaleDown, _tunnelSize - 2, seed);
+        public override Tunneler[] CreateScaleDownChilds()
+        {
+            var childSeed = _rand.Next();
+            return _childCreatorOfMainTunneler.CreateChildAll(SplitPointType.ScaleDown, _tunnelSize - 2, childSeed);
+        }
 
         Position? GetSideDoor(SplitPoint splitPoint)
         {

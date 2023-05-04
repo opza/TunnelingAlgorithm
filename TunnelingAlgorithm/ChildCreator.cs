@@ -7,15 +7,12 @@ namespace TunnelingAlgorithm
         protected ParentT _parent;
         protected Random _rand;
 
-        public ChildCreator(ParentT parent, int? seed = null)
+        public ChildCreator(ParentT parent, int seed)
         {
             _parent = parent;
-            if(seed.HasValue)
-                _rand = new Random(seed.Value);
-            else
-                _rand = new Random();
+            _rand = new Random(seed);
         }
 
-        public abstract ChildT CreateChild(int? childSeed);
+        public abstract ChildT CreateChild(int childSeed);
     }
 }

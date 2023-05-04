@@ -8,11 +8,11 @@ namespace TunnelingAlgorithm
 {
     internal class ChildCreatorOfJoinTunnelerFromMainTunneler : ChildCreator<JoinTunneler, MainTunneler>
     {
-        public ChildCreatorOfJoinTunnelerFromMainTunneler(MainTunneler parent, int? seed = null) : base(parent, seed)
+        public ChildCreatorOfJoinTunnelerFromMainTunneler(MainTunneler parent, int seed) : base(parent, seed)
         {
         }
 
-        public override JoinTunneler CreateChild(int? childSeed)
+        public override JoinTunneler CreateChild(int childSeed)
         {
             if (_parent.SplitPoints.Length <= 0)
                 return null;

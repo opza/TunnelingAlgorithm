@@ -1,8 +1,10 @@
 ﻿
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
 using TunnelingAlgorithm;
@@ -18,6 +20,7 @@ namespace WPFPrinter
         int _worldWidth = 150;
         int _worldHeight = 150;
 
+        Random _rand = new Random();
         Bitmap _bitmap;
 
         public ActionCommand GenerateCommand { get; set; }
@@ -33,7 +36,10 @@ namespace WPFPrinter
 
         void GenerateWorld()
         {
-            (var tiles, var roomDatas) = WorldGenerator.Generate(_worldWidth, _worldHeight, PARAM_PATH);
+            var seed = _rand.Next();
+            Debug.WriteLine($"Seed : {seed}");
+
+            (var tiles, var roomDatas) = WorldGenerator.Generate(_worldWidth, _worldHeight, PARAM_PATH, seed);
             var emptyTileCount = 0f;
 
             for (int y = 0; y < _worldHeight; y++)
@@ -65,6 +71,18 @@ namespace WPFPrinter
                     }
 
                     _bitmap.SetPixel(x, y, color);
+                }
+            }
+
+            var officeData = roomDatas.First(roomData => roomData.RoomType == RoomType.Office);
+            foreach (var min in officeData.Min)
+            {
+                for (int x = min.x; x < min.x + officeData.Width; x++)
+                {
+                    for (int y = min.y; y < min.y + officeData.Height; y++)
+                    {
+                        _bitmap.SetPixel(x, _worldWidth - y - 1, Color.Blue);
+                    }
                 }
             }
 

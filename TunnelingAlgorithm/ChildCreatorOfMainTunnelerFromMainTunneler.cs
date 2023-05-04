@@ -8,11 +8,11 @@ namespace TunnelingAlgorithm
 {
     internal class ChildCreatorOfMainTunnelerFromMainTunneler : ChildCreator<MainTunneler, MainTunneler>
     {
-        public ChildCreatorOfMainTunnelerFromMainTunneler(MainTunneler parent, int? seed = null) : base(parent, seed)
+        public ChildCreatorOfMainTunnelerFromMainTunneler(MainTunneler parent, int seed) : base(parent, seed)
         {
         }
 
-        public override MainTunneler CreateChild(int? seed)
+        public override MainTunneler CreateChild(int seed)
         {
             if (_parent.SplitPoints.Length <= 0)
                 return null;
@@ -61,7 +61,7 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    return new MainTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed);
+                    return new MainTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, seed, false);
 
                 }
             }
@@ -69,7 +69,7 @@ namespace TunnelingAlgorithm
             return null;
         }
 
-        public MainTunneler[] CreateChildAll(SplitPointType type, int childTunnelSize, int? seed)
+        public MainTunneler[] CreateChildAll(SplitPointType type, int childTunnelSize, int seed)
         {
             var childs = new List<MainTunneler>();
 
@@ -112,7 +112,7 @@ namespace TunnelingAlgorithm
 
                     splitPoint[dir] = ConnectState.Connected;
 
-                    childs.Add(new MainTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, false, seed));
+                    childs.Add(new MainTunneler(_parent.World, _parent.Config, _parent.BuildedRooms, _parent.Generation + 1, pivot, childTunnelSize, _parent.RootDir, dir, seed, false));
 
                 }
             }

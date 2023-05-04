@@ -20,7 +20,6 @@ namespace TunnelingAlgorithm
         protected Roomer _roomer;
 
         protected int _gen;
-        protected int _seed;
 
         protected int _maxLife;
         protected int _currLife;
@@ -43,7 +42,6 @@ namespace TunnelingAlgorithm
         public bool Alive => _currLife > 0;
         public int TunnelSize => _tunnelSize;
         public int Generation => _gen;
-        public int Seed => _seed;
 
         public World World => _world;
         public Config Config => _config;
@@ -61,22 +59,20 @@ namespace TunnelingAlgorithm
         public int BuildableCorridorHeightMin => _config.BuildableCorridorPadding + BORDER_SIZE;
         public int BuildableCorridorHeightMax => _world.Height - _config.BuildableCorridorPadding - BORDER_SIZE - 1;
 
-        public static Tunneler[] CreateRootTunnelers(World world, Config config)
+        public static Tunneler[] CreateRootTunnelers(World world, Config config, int seed)
         {
             var buildedRooms = config.RoomConfigs.Select(roomConfig => new RoomData(roomConfig.RoomType, roomConfig.Width, roomConfig.Height)).ToArray();
 
+            var seedCreator = new Random(seed);
+
             return config.EnterDatas
-                .Select(data => new MainTunneler(world, config, buildedRooms, 0, new Position(data.PosX, data.PosY), data.TunnelSize, data.Direction, data.Direction, true))
+                .Select(data => new MainTunneler(world, config, buildedRooms, 0, new Position(data.PosX, data.PosY), data.TunnelSize, data.Direction, data.Direction, seedCreator.Next(), true ))
                 .ToArray();
         }
 
-        protected Tunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, int tunnelSize, Direction dir, int? seed)
+        protected Tunneler(World world, Config config, RoomData[] buildedRooms, int gen, Position startPivot, int tunnelSize, Direction dir, int seed)
         {
-            if (seed.HasValue)
-                _seed = seed.Value;
-            else
-                _seed = new Random().Next();
-            _rand = new Random(_seed);
+            _rand = new Random(seed);
 
             _config = config;
             _world = world;
@@ -100,10 +96,10 @@ namespace TunnelingAlgorithm
 
         public abstract void BuildCorridor(bool hasTailRoom);
 
-        public abstract Tunneler CreateChild(int? seed = null);
+        public abstract Tunneler CreateChild();
 
-        public abstract Tunneler[] CreateScaleUpChilds(int? seed = null);
-        public abstract Tunneler[] CreateScaleDownChilds(int? seed = null);
+        public abstract Tunneler[] CreateScaleUpChilds();
+        public abstract Tunneler[] CreateScaleDownChilds();
 
         public bool BuildRoom(bool aligned = false)
         {
