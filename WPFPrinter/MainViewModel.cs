@@ -13,12 +13,14 @@ namespace WPFPrinter
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        const string PARAM_PATH = "D:\\Code\\TunnelingAlgorithm\\TunnelingAlgorithm\\Param.json";
+        const string PARAM_PATH = "E:\\Code\\Other\\TunnelingAlgorithm\\Param.json";
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         int _worldWidth = 150;
         int _worldHeight = 150;
+
+        WorldGenerator _worldGenerator;
 
         Random _rand = new Random();
         Bitmap _bitmap;
@@ -28,7 +30,8 @@ namespace WPFPrinter
         public float EmptyPercentage { get; set; }
 
         public MainViewModel()
-        {          
+        {
+            _worldGenerator = new WorldGenerator(PARAM_PATH);
             _bitmap = new Bitmap(_worldWidth, _worldHeight);
 
             GenerateCommand = new ActionCommand(GenerateWorld);
@@ -39,7 +42,7 @@ namespace WPFPrinter
             var seed = _rand.Next();
             Debug.WriteLine($"Seed : {seed}");
 
-            (var tiles, var roomDatas) = WorldGenerator.Generate(_worldWidth, _worldHeight, PARAM_PATH, seed);
+            (var tiles, var rooms) = _worldGenerator.Generate(_worldWidth, _worldHeight, seed);
             var emptyTileCount = 0f;
 
             for (int y = 0; y < _worldHeight; y++)
@@ -74,7 +77,7 @@ namespace WPFPrinter
                 }
             }
 
-            var officeData = roomDatas.First(roomData => roomData.RoomType == RoomType.Office);
+            var officeData = rooms.First(roomData => roomData.RoomType == RoomType.Office);
             foreach (var min in officeData.Min)
             {
                 for (int x = min.x; x < min.x + officeData.Width; x++)
@@ -91,7 +94,7 @@ namespace WPFPrinter
             OnPropertyChanged(nameof(EmptyPercentage));
             OnPropertyChanged(nameof(BitmapImage));
 
-            foreach (var roomData in roomDatas)
+            foreach (var roomData in rooms)
             {
                 Debug.WriteLine($"{roomData.RoomType} : {roomData.Count}");
             }

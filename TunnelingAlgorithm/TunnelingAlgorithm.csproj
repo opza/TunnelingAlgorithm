@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="OpzaUtil">
-      <HintPath>..\..\OpzaUtil\DLL\Release\netstandard2.0\OpzaUtil.dll</HintPath>
+      <HintPath>..\dll\OpzaUtil.dll</HintPath>
     </Reference>
   </ItemGroup>
 

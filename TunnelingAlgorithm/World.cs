@@ -129,14 +129,13 @@ namespace TunnelingAlgorithm
 
         public bool ValidPosition(int x, int y) => x >= 0 && x < _width && y >= 0 && y < _height;
 
-        public Tunneler[] Generate(string paramPath, int seed)
+        public Tunneler[] Generate(Config config, int seed)
         {
             InitTiles();
 
             RandomEnumerable.Seed = seed;
             var rand = new Random(seed);
 
-            var config = Config.Read(paramPath);
             var rootTunnelers = Tunneler.CreateRootTunnelers(this, config, seed);
 
             var lastTunnelers = new List<Tunneler>();
